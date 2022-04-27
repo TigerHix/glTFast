@@ -22,6 +22,9 @@ using UnityEngine;
 // #endif
 
 namespace GLTFast {
+    
+    using Logging;
+    
     public class GameObjectInstantiator : IInstantiator {
 
         public class Settings {

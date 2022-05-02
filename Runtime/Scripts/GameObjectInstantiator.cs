@@ -25,17 +25,39 @@ namespace GLTFast {
     
     using Logging;
     
+    /// <summary>
+    /// Generates a GameObject hierarchy from a glTF scene 
+    /// </summary>
     public class GameObjectInstantiator : IInstantiator {
 
+        /// <summary>
+        /// Instantiation settings
+        /// </summary>
         public class Settings {
+            /// <summary>
+            /// Corresponds to <see cref="SkinnedMeshRenderer.updateWhenOffscreen"/>
+            /// When true, calculate the mesh bounds at all times, even when
+            /// the mesh is not visible.
+            /// </summary>
             public bool skinUpdateWhenOffscreen = true;
             public int layer;
         }
         
+        /// <summary>
+        /// Represents a single instance of a glTF (scene)
+        /// </summary>
         public class SceneInstance {
+            
+            /// <summary>
+            /// List of instantiated cameras
+            /// </summary>
             public List<Camera> cameras { get; private set; }
 
-            public void AddCamera(Camera camera) {
+            /// <summary>
+            /// Adds a camera
+            /// </summary>
+            /// <param name="camera">Camera to be added</param>
+            internal void AddCamera(Camera camera) {
                 if (cameras == null) {
                     cameras = new List<Camera>();
                 }
@@ -43,14 +65,29 @@ namespace GLTFast {
             }
         }
         
+        /// <summary>
+        /// Instantiation settings
+        /// </summary>
         protected Settings settings;
         
+        /// <summary>
+        /// Instantiation logger
+        /// </summary>
         protected ICodeLogger logger;
         
+        /// <summary>
+        /// glTF to instantiate from
+        /// </summary>
         protected IGltfReadable gltf;
         
+        /// <summary>
+        /// Generated GameObjects will get parented to this Transform
+        /// </summary>
         protected Transform parent;
 
+        /// <summary>
+        /// glTF node index to instantiated GameObject dictionary
+        /// </summary>
         protected Dictionary<uint,GameObject> nodes;
 
         /// <summary>
@@ -78,11 +115,13 @@ namespace GLTFast {
             this.settings = settings ?? new Settings();
         }
 
+        /// <inheritdoc />
         public virtual void Init() {
             nodes = new Dictionary<uint, GameObject>();
             sceneInstance = new SceneInstance();
         }
 
+        /// <inheritdoc />
         public void CreateNode(
             uint nodeIndex,
             Vector3 position,
@@ -97,6 +136,7 @@ namespace GLTFast {
             nodes[nodeIndex] = go;
         }
 
+        /// <inheritdoc />
         public void SetParent(uint nodeIndex, uint parentIndex) {
             if(nodes[nodeIndex]==null || nodes[parentIndex]==null ) {
                 logger?.Error(LogCode.HierarchyInvalid);
@@ -105,10 +145,12 @@ namespace GLTFast {
             nodes[nodeIndex].transform.SetParent(nodes[parentIndex].transform,false);
         }
 
+        /// <inheritdoc />
         public virtual void SetNodeName(uint nodeIndex, string name) {
             nodes[nodeIndex].name = name ?? $"Node-{nodeIndex}";
         }
 
+        /// <inheritdoc />
         public virtual void AddPrimitive(
             uint nodeIndex,
             string meshName,
@@ -172,6 +214,7 @@ namespace GLTFast {
             renderer.sharedMaterials = materials;
         }
 
+        /// <inheritdoc />
         public void AddPrimitiveInstanced(
             uint nodeIndex,
             string meshName,
@@ -206,6 +249,7 @@ namespace GLTFast {
             }
         }
 
+        /// <inheritdoc />
         public void AddCamera(uint nodeIndex, uint cameraIndex) {
             var camera = gltf.GetSourceCamera(cameraIndex);
             switch (camera.typeEnum) {
@@ -339,6 +383,7 @@ namespace GLTFast {
         //     }
         // }
 
+        /// <inheritdoc />
         public virtual void AddScene(
             string name,
             uint[] nodeIndices

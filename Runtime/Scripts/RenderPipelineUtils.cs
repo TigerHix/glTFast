@@ -47,7 +47,15 @@ namespace GLTFast {
         HighDefinition
     }
 
+	/// <summary>
+	/// Render Pipeline Utilities
+	/// </summary>
     public static class RenderPipelineUtils {
+		
+		/// <summary>
+		/// Detect currently used render pipeline
+		/// </summary>
+		/// <returns>Render pipeline currently in use</returns>
         public static RenderPipeline DetectRenderPipeline() {
 #if USING_URP || USING_HDRP
 	        // ReSharper disable once Unity.PerformanceCriticalCodeNullComparison
